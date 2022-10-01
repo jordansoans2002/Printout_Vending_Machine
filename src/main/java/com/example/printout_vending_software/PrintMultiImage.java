@@ -8,7 +8,7 @@ import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.OrientationRequested;
 import java.io.*;
 
-//print multiple images in the same document
+//print multiple images in the same document, system can find multidoc printers
 public class PrintMultiImage {
     public static void main(String[] args) throws IOException {
         new PrintMultiImage().printImage();
@@ -29,13 +29,12 @@ public class PrintMultiImage {
             DocFlavor docFlavorSelected = DocFlavor.INPUT_STREAM.JPEG;
             Doc docSelected= new SimpleDoc(selectedFile,docFlavorSelected,null);*/
 
-            InputStream pngFile = new FileInputStream("TestPrintOptions/test files/table.png");
-            DocFlavor docFlavorPng = DocFlavor.INPUT_STREAM.PNG;
-            Doc docPNG = new SimpleDoc(pngFile, docFlavorPng, null);
+            String pngPath="src/main/resources/com/example/printout_vending_software/test files/feature board.PNG";
+            InputStream pngFile = new FileInputStream(pngPath);
+            Doc docPNG = new SimpleDoc(pngFile, DocFlavor.INPUT_STREAM.PNG, null);
 
-            InputStream jpgFile = new FileInputStream("TestPrintOptions/test files/monkey.JPG");
-            DocFlavor docFlavorJpg = DocFlavor.INPUT_STREAM.JPEG;
-            Doc docJPG = new SimpleDoc(jpgFile, docFlavorJpg, null);
+            InputStream jpgFile = new FileInputStream("src/main/resources/com/example/printout_vending_software/test files/description.JPG");
+            Doc docJPG = new SimpleDoc(jpgFile, DocFlavor.INPUT_STREAM.JPEG, null);
 
             PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
             aset.add(MediaSizeName.ISO_A10);
@@ -57,9 +56,9 @@ public class PrintMultiImage {
             PrintService s = PrintServiceLookup.lookupPrintServices(null,null)[2];
             //MultiDocPrintJob multiJob = (MultiDocPrintJob) s.createPrintJob();
             //MultiDocPrintJob multiJob = multiDocPrintServices[0].createMultiDocPrintJob();
-            HandleMultiDoc pg1 = new HandleMultiDoc(pngFile);
-            HandleMultiDoc pg2 = new HandleMultiDoc(jpgFile);
-            HandleMultiDoc pg3 = new HandleMultiDoc(pngFile);
+            HandleMultiDoc pg1 = new HandleMultiDoc(docPNG);
+            HandleMultiDoc pg2 = new HandleMultiDoc(docJPG);
+            HandleMultiDoc pg3 = new HandleMultiDoc(docPNG);
             pg1.next = pg2;
             pg2.next = pg3;
             try {
@@ -74,15 +73,16 @@ public class PrintMultiImage {
 
 
     static class HandleMultiDoc implements MultiDoc {
-        Doc doc = null;
+        Doc doc;
         PrintMultiImage.HandleMultiDoc next = null;
 
-        HandleMultiDoc(InputStream f) {
-            doc = new SimpleDoc(f, DocFlavor.INPUT_STREAM.JPEG, null);
+        HandleMultiDoc(Doc d) {
+            doc = d;
         }
 
         @Override
         public Doc getDoc() throws IOException {
+            System.out.println(1);
             return doc;
         }
 
