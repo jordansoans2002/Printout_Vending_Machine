@@ -1,17 +1,20 @@
-package com.example.printout_vending_software;
-
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.printing.PDFPageable;
 
 import javax.print.*;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
-import javax.print.attribute.standard.*;
+import javax.print.attribute.standard.Chromaticity;
+import javax.print.attribute.standard.Copies;
+import javax.print.attribute.standard.MediaSizeName;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class ChooseFile {
     public static void main(String []args){
@@ -24,9 +27,9 @@ public class ChooseFile {
             File startingDirectory = new File(fileDirectory);
             JFileChooser selectFile = new JFileChooser(fileDirectory);//"H:\\");
             FileNameExtensionFilter filterSupported = new FileNameExtensionFilter("supported types", "jpg", "png", "pdf", "doc", "docx");
-            FileNameExtensionFilter filterImages = new FileNameExtensionFilter("images", "jpg", "png", "jfif");
-            FileNameExtensionFilter filterDocs = new FileNameExtensionFilter("documents", "pdf", "doc", "docx");
-            String supported = "jpg png pdf doc docx JPG PNG PDF DOC DOCX";
+            FileNameExtensionFilter filterImages = new FileNameExtensionFilter(".jpg .png .jfif", "jpg", "png", "jfif");
+            FileNameExtensionFilter filterDocs = new FileNameExtensionFilter(".pdf", "pdf");
+            String supported = "jpg png pdf doc docx JPG PNG PDF";
             String ext="";
             InputStream selectedFile = null;
             PDDocument pdfDoc = null;
