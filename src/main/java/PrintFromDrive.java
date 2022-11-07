@@ -73,7 +73,7 @@ public class PrintFromDrive {
                     .execute();
             List<File> files = filesInQueue.getFiles();
             for(File f:files) {
-                System.out.println(f.getName());
+                System.out.println(f.getName()+" "+f.getProperties());
             }
             return files;
         }
