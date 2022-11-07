@@ -47,6 +47,7 @@ public class DriveFunctions {
             Collections.singletonList(DriveScopes.DRIVE);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
+    static Scanner sc=new Scanner(System.in);
     /**
      * Creates an authorized Credential object.
      *
@@ -57,7 +58,7 @@ public class DriveFunctions {
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT)
             throws IOException {
         // Load client secrets.
-        InputStream in = DriveQuickstart.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+        InputStream in = DriveFunctions.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         if (in == null) {
             throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
         }
@@ -86,9 +87,10 @@ public class DriveFunctions {
         //uploadBasic(service,createFolder(service));
         printFileNames(service);
 
-        //UploadBasic.uploadBasic(CreateFolder.createFolder());
-        //UploadBasic.uploadBasic("1GoLUdxb66DA3AvWAP1MMawJUx4qbTjmH");
-        //DownloadFile.downloadFile("1awVnwz8E4N7JbcxAhEeDYze3B989TK8j");
+        //createFolder(service);
+        //uploadBasic(service,"1k0zyIEgNbBC018dCBCZVDPYHVRXs2vQS");
+        //download(fileId)
+        //export(fileId)
         //SearchFile.searchFile();
     }
 
@@ -139,8 +141,18 @@ public class DriveFunctions {
         File fileMetadata = new File();
         fileMetadata.setName("Proposal.pdf");
         fileMetadata.setParents(Arrays.asList(parentId));
+
         Map<String, String> map = new HashMap<>();
-        map.put("pages","10");
+        map.put("pages","3");
+        System.out.println("1.black and white 2.color");
+        String color = sc.nextLine();
+        System.out.println("enter no of copies");
+        String copies=sc.nextLine();
+        System.out.println("enter 1.portrait 2.landscape ");
+        String orientation=(sc.nextInt()==2)?"landscape":"portrait";
+        map.put("color",color);
+        map.put("copies",copies);
+        map.put("orientation",orientation);
         fileMetadata.setProperties(map);
 
         // File's content.
@@ -172,6 +184,22 @@ public class DriveFunctions {
         }catch(GoogleJsonResponseException e) {
             System.err.println("Unable to move file: " + e.getDetails());
             //throw e;
+        }
+    }
+
+    static void exportPdf(Drive service, String realFileId) throws  IOException{
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try {
+            service.files().export(realFileId, "application/pdf")
+                    .executeMediaAndDownloadTo(outputStream);
+
+            PDDocument pdfDoc=PDDocument.load(outputStream.toByteArray());
+            pdfDoc.save("src/main/resources/Outputs/" + realFileId + ".pdf");
+            pdfDoc.close();
+        } catch (GoogleJsonResponseException e) {
+            // TODO(developer) - handle error appropriately
+            System.err.println("Unable to export file: " + e.getDetails());
+            throw e;
         }
     }
 }
